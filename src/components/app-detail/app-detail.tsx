@@ -1,5 +1,5 @@
 import { Component, Prop,State } from '@stencil/core';
-import { MatchResults } from '@stencil/router';
+import { MatchResults, RouterHistory } from '@stencil/router';
 
 @Component({
   tag: 'app-detail',
@@ -7,68 +7,83 @@ import { MatchResults } from '@stencil/router';
   shadow: true
 })
 export class AppDetail {
+
   @Prop() match: MatchResults;
-  @Prop() iden: String;
-@State() articles: any;
-@State() article2: any;
+  @State() articles: any;
+  @Prop()   back : RouterHistory;
 
 
 
-componentWillLoad() {
-  return fetch(`https://polymer-101-workshop.cleverapps.io/api/blogpost/`)
-    .then(response => response.json())
-    .then(data => {
-      this.articles = data;
-    //console.log(data);
+  goBack(){
+    this.back.goBack();
+  }
 
-  });
+  deleteArticle() {
+    return fetch("https://polymer-101-workshop.cleverapps.io/api/blogpost/" + this.match.params.id, {
+      method: 'DELETE',headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      },
+    }).then(function(res) {  this.goBack();
+      return res.json();
+    })
+      .then(function(data) {
+        console.log(JSON.stringify(data));
+      });
+  }
 
-}
-
-  /*normalize(name: string): string {
-    if (name) {
-      return name.substr(0, 1).toUpperCase() + name.substr(1).toLowerCase();
-    }
-    return '';
-  }*/
-
-  render() {
-    const data2=this.match.params.id;
-   this.article2 =this.articles.filter(v => v._id === `${data2}`);
-    //console.log(this.article2);
-    console.log('raaaaaaaaaaaaaa');
-
+    render() {
+      
+      //console.log(this.article2);
       return (
 
-        
+      <div class="det">
         <div class= "table-responsive">
-                {this.article2.map(
-                    (article) =>
-                    <table class="table-condensed" >
-                    <tr><td>{article.title}</td>
-                    <td></td>
-                    </tr> 
-                    <tr><td>{article.article}</td>
-                    <td></td></tr> 
-                    <tr>
-                    <td id="td">  Ajouté par : {article.autor}  à {article.creationDate} </td>
-                    <td> </td>
-                    </tr>
-                    
-                    <tr><td >
+        <div id="div-retour">
+        <stencil-route-link url="/article" ><button id="retour">Retour</button></stencil-route-link>
+        </div>
+             <table class="table-article" >
+                <tr>
+                  <td class="title">{this.articles.title}</td>
+                  <td></td>
+                </tr> 
+                <tr>
+                  <td>{this.articles.article}</td>
+                  <td></td>
+                </tr> 
+                <tr>
+                  <td id="td">  Ajouté par : {this.articles.autor}  à {this.articles.creationDate} </td>
+                  <td> </td>
+                </tr>
+                <tr>
+                  <td>  
+                    <stencil-route-link url={"/edit/" + this.articles._id}><button id="edit">Edit</button></stencil-route-link>
 
-                       <stencil-route-link url="/article">BACK</stencil-route-link>
-                    </td>
-                        
-                    <td></td>
-                    </tr>
-                    
-          
-        </table>
+                    <stencil-route-link url="/article"  onClick={() => this.deleteArticle()} > <button id="delete">Delete</button></stencil-route-link>
+                  </td>  
+                </tr>   
+               </table>
+          )}
         
-      )}
+        </div>
     </div>
       );
 
   }
+
+
+
+
+  componentWillLoad() {
+    let id = this.match.params.id;
+    return fetch(`https://polymer-101-workshop.cleverapps.io/api/blogpost/` +id)
+      .then(response => response.json())
+      .then(data => {
+        this.articles = data;
+      //console.log(data);
+  
+    });
+  
+  }
+  
 }
