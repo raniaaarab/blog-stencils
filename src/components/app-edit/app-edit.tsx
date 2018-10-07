@@ -66,7 +66,7 @@ export class AppAdd {
   render() {
     return (
       
-
+      <div class="det">
       <div class="form-group">
             <form>
                <label>Title</label>
@@ -86,7 +86,7 @@ export class AppAdd {
                 </div>
            </form>
       </div>
-
+      </div>
 
     );
     }

@@ -10,7 +10,9 @@ export class AppRoot {
  
   render() {
     return (
-      <div>
+      <div >
+
+     
         <header>
           <h1>Rania Aarab Blog</h1>
         </header>
@@ -18,8 +20,12 @@ export class AppRoot {
           <h1><a href="/article">Home</a></h1>
           <h1><a  href="/post">New Article</a></h1>
         </div>
+        <div >
+       
+        
+        </div>
         <div>
-      <main>
+      <main >
           <stencil-router>
             <stencil-route-switch scrollTopOffset={0}>
               <stencil-route url='/' component='app-home' exact={true} />
